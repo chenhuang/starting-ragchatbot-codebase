@@ -5,7 +5,7 @@ const API_URL = '/api';
 let currentSessionId = null;
 
 // DOM elements
-let chatMessages, chatInput, sendButton, totalCourses, courseTitles;
+let chatMessages, chatInput, sendButton, totalCourses, courseTitles, themeToggle;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,8 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton = document.getElementById('sendButton');
     totalCourses = document.getElementById('totalCourses');
     courseTitles = document.getElementById('courseTitles');
+    themeToggle = document.getElementById('themeToggle');
     
     setupEventListeners();
+    initializeTheme();
     createNewSession();
     loadCourseStats();
 });
@@ -29,6 +31,16 @@ function setupEventListeners() {
         if (e.key === 'Enter') sendMessage();
     });
     
+    // Theme toggle
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+        themeToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
+    }
     
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
@@ -187,5 +199,39 @@ async function loadCourseStats() {
         if (courseTitles) {
             courseTitles.innerHTML = '<span class="error">Failed to load courses</span>';
         }
+    }
+}
+
+// Theme Functions
+function initializeTheme() {
+    // Check if user has a saved theme preference, otherwise use dark as default
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+        // Default is dark theme, which is handled by :root styles
+        document.documentElement.removeAttribute('data-theme');
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    let newTheme;
+    
+    if (currentTheme === 'light') {
+        // Switch to dark
+        document.documentElement.removeAttribute('data-theme');
+        newTheme = 'dark';
+        localStorage.removeItem('theme');
+    } else {
+        // Switch to light
+        document.documentElement.setAttribute('data-theme', 'light');
+        newTheme = 'light';
+        localStorage.setItem('theme', 'light');
+    }
+    
+    // Add smooth transition class if not already present
+    if (!document.body.classList.contains('theme-transition')) {
+        document.body.classList.add('theme-transition');
     }
 }
