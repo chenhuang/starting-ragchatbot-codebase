@@ -1,0 +1,13 @@
+[wsl2]
+# Enable automatic port forwarding
+localhostForwarding=true
+
+# Set memory and CPU limits (optional)
+memory=4GB
+processors=2
+
+# Enable systemd (optional, for Ubuntu 22.04+)
+systemd=true
+
+# Network settings for better connectivity
+networkingMode=NAT
